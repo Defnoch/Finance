@@ -1,0 +1,100 @@
+<div class="dashboard-container">
+  <h1>Transacties importeren</h1>
+
+  <div class="row">
+    <div class="col-12 col-md-6 mb-3">
+      <mat-card class="example-card import-card" appearance="outlined">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image"></div>
+          <mat-card-title>ASN Betaalrekening</mat-card-title>
+          <mat-card-subtitle>CSV-bestand uploaden</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <label class="mb-1 d-block">
+            <span class="fw-500">Bestand</span><br />
+            <input type="file" (change)="onFileChange($event)" accept=".csv" />
+          </label>
+          <mat-checkbox [(ngModel)]="overrideExisting">
+            Bestaande ASN-transacties voor deze rekening overschrijven
+          </mat-checkbox>
+        </mat-card-content>
+        <mat-card-actions>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="onUpload()"
+            [disabled]="!selectedFile || isLoading"
+          >
+            {{ isLoading ? 'Bezig...' : 'Uploaden' }}
+          </button>
+        </mat-card-actions>
+        @if (error) {
+          <mat-card class="error-message mt-1">{{ error }}</mat-card>
+        }
+        @if (result) {
+          <mat-card class="mt-1">
+            <h3>Resultaat</h3>
+            <p>Totaal records: {{ result.totalRecords }}</p>
+            <p>Nieuw: {{ result.insertedRecords }}</p>
+            <p>Dubbele: {{ result.duplicateRecords }}</p>
+            @if (result.errors && result.errors.length) {
+              <h4>Fouten</h4>
+              <mat-list>
+                @for (e of result.errors; track e) {
+                  <mat-list-item>{{ e }}</mat-list-item>
+                }
+              </mat-list>
+            }
+          </mat-card>
+        }
+      </mat-card>
+    </div>
+    <div class="col-12 col-md-6 mb-3">
+      <mat-card class="example-card import-card" appearance="outlined">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image"></div>
+          <mat-card-title>ASN Spaarrekening</mat-card-title>
+          <mat-card-subtitle>CSV-bestand uploaden</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <label class="mb-1 d-block">
+            <span class="fw-500">Bestand</span><br />
+            <input type="file" (change)="onSpaarFileChange($event)" accept=".csv" />
+          </label>
+          <mat-checkbox [(ngModel)]="overrideSpaarExisting">
+            Bestaande ASN spaartransacties voor deze rekening overschrijven
+          </mat-checkbox>
+        </mat-card-content>
+        <mat-card-actions>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="onSpaarUpload()"
+            [disabled]="!selectedSpaarFile || isSpaarLoading"
+          >
+            {{ isSpaarLoading ? 'Bezig...' : 'Uploaden' }}
+          </button>
+        </mat-card-actions>
+        @if (spaarError) {
+          <mat-card class="error-message mt-1">{{ spaarError }}</mat-card>
+        }
+        @if (spaarResult) {
+          <mat-card class="mt-1">
+            <h3>Resultaat</h3>
+            <p>Totaal records: {{ spaarResult.totalRecords }}</p>
+            <p>Nieuw: {{ spaarResult.insertedRecords }}</p>
+            <p>Dubbele: {{ spaarResult.duplicateRecords }}</p>
+            @if (spaarResult.errors && spaarResult.errors.length) {
+              <h4>Fouten</h4>
+              <mat-list>
+                @for (e of spaarResult.errors; track e) {
+                  <mat-list-item>{{ e }}</mat-list-item>
+                }
+              </mat-list>
+            }
+          </mat-card>
+        }
+      </mat-card>
+    </div>
+  </div>
+</div>

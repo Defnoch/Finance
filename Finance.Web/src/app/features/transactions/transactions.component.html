@@ -1,0 +1,272 @@
+<div class="dashboard-container">
+  <h1>Transacties</h1>
+
+  <style>
+    .mat-table--dense th,
+    .mat-table--dense td {
+      height: 20px !important;
+      min-height: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      vertical-align: middle !important;
+      font-size: 0.92em;
+      line-height: 1.1;
+    }
+
+    .truncate {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* Diep Material form controls en select compacter maken */
+    ::ng-deep .mat-table--dense .mat-form-field {
+      margin: 0 !important;
+      height: 20px !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+    }
+
+    ::ng-deep .mat-table--dense .mat-form-field-wrapper,
+    ::ng-deep .mat-table--dense .mat-form-field-flex {
+      padding: 0 !important;
+      min-height: 0 !important;
+      height: 20px !important;
+    }
+
+    ::ng-deep .mat-table--dense .mat-select-trigger {
+      min-height: 14px !important;
+      font-size: 0.92em;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    ::ng-deep .mat-table--dense .mat-select {
+      min-height: 14px !important;
+      height: 14px !important;
+      padding: 0 !important;
+    }
+
+    ::ng-deep .mat-table--dense .mat-select-arrow {
+      height: 14px !important;
+      line-height: 14px !important;
+    }
+
+    ::ng-deep .mat-table--dense .mat-form-field-infix {
+      padding: 0 !important;
+      min-height: 0 !important;
+      height: 14px !important;
+    }
+
+    @media (max-width: 900px) {
+      .mat-table--dense th,
+      .mat-table--dense td {
+        font-size: 0.85em;
+        padding: 0 2px !important;
+        height: 16px !important;
+      }
+
+      .truncate {
+        max-width: 90px;
+      }
+
+      ::ng-deep .mat-table--dense .mat-form-field {
+        height: 16px !important;
+      }
+
+      ::ng-deep .mat-table--dense .mat-form-field-wrapper,
+      ::ng-deep .mat-table--dense .mat-form-field-flex {
+        height: 16px !important;
+      }
+
+      ::ng-deep .mat-table--dense .mat-select-trigger {
+        min-height: 12px !important;
+      }
+
+      ::ng-deep .mat-table--dense .mat-select {
+        min-height: 12px !important;
+        height: 12px !important;
+      }
+
+      ::ng-deep .mat-table--dense .mat-form-field-infix {
+        height: 12px !important;
+      }
+    }
+
+    .inline-category-edit {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      min-width: 80px !important;
+      width: 100px !important;
+      height: 28px !important;
+      font-size: 0.95em !important;
+      vertical-align: middle !important;
+    }
+
+    .inline-category-edit .mat-form-field-wrapper,
+    .inline-category-edit .mat-form-field-flex,
+    .inline-category-edit .mat-form-field-infix {
+      padding: 0 !important;
+      min-height: 0 !important;
+      height: 24px !important;
+      background: none !important;
+    }
+
+    .inline-category-edit .mat-select-trigger {
+      min-width: 60px !important;
+      min-height: 18px !important;
+      font-size: 0.95em !important;
+      padding: 0 !important;
+    }
+
+    .inline-category-edit .mat-select {
+      min-width: 60px !important;
+      min-height: 18px !important;
+      height: 18px !important;
+      padding: 0 !important;
+      background: none !important;
+    }
+
+    .inline-category-edit .mat-select-arrow {
+      height: 16px !important;
+      line-height: 16px !important;
+    }
+
+    .classic-category-select {
+      min-width: 80px;
+      width: 100px;
+      height: 22px;
+      font-size: 0.95em;
+      padding: 0 4px;
+      margin: 0;
+      border-radius: 3px;
+      border: 1px solid #bbb;
+      background: #fff;
+      vertical-align: middle;
+    }
+  </style>
+
+  <section class="filters">
+    <form (ngSubmit)="onApplyFilters()">
+      <mat-form-field appearance="fill">
+        <mat-label>Van</mat-label>
+        <input matInput type="date" [(ngModel)]="fromDate" name="fromDate" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Tot</mat-label>
+        <input matInput type="date" [(ngModel)]="toDate" name="toDate" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Categorie</mat-label>
+        <mat-select [(ngModel)]="selectedCategoryIdFilter" name="categoryFilter">
+          <mat-option [value]="undefined">(alle)</mat-option>
+          @for (c of categories; track c.categoryId) {
+          <mat-option [value]="c.categoryId">{{ c.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Min bedrag</mat-label>
+        <input matInput type="number" [(ngModel)]="minAmount" name="minAmount" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Max bedrag</mat-label>
+        <input matInput type="number" [(ngModel)]="maxAmount" name="maxAmount" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Zoeken</mat-label>
+        <input matInput type="text" [(ngModel)]="searchText" name="searchText" placeholder="Omschrijving" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">Filteren</button>
+      <button mat-button type="button" (click)="clearFilters()">Filters wissen</button>
+    </form>
+  </section>
+
+  <section class="section">
+    @if (isLoading) {
+    <div>Laden...</div>
+    }
+
+    @if (error) {
+    <div class="error">{{ error }}</div>
+    }
+
+    @if (!isLoading && filteredTransactions.length > 0) {
+    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 8px;">
+      <span style="font-weight: bold;">Totale balans:</span>
+      <span style="margin-left: 8px;">€ {{ totalBalance ?? '-' }}</span>
+    </div>
+    <table mat-table [dataSource]="pagedTransactions" class="mat-elevation-z2 mat-table--dense">
+      <ng-container matColumnDef="bookingDate">
+        <th mat-header-cell *matHeaderCellDef style="width: 110px;">Datum</th>
+        <td mat-cell *matCellDef="let t" style="width: 110px;">{{ t.bookingDate }}</td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef style="width: 160px;">Naam rekeninghouder</th>
+        <td mat-cell *matCellDef="let t" style="width: 160px;"><span class="truncate">{{ t.name }}</span></td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef style="width: 180px;">Omschrijving</th>
+        <td mat-cell *matCellDef="let t" style="width: 180px;">
+          @if (t.description && t.name && t.description.trim() !== t.name.trim()) {
+          <span class="truncate">{{ t.description }}</span>
+          }
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef style="width: 110px;">Bedrag</th>
+        <td mat-cell *matCellDef="let t" style="width: 110px;" [class.positive]="(t.amount ?? 0) > 0" [class.negative]="(t.amount ?? 0) < 0">
+          € {{ (t.amount ?? 0) | number:'1.2-2' }} {{ t.currency }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="transactionType">
+        <th mat-header-cell *matHeaderCellDef style="width: 110px;">Type</th>
+        <td mat-cell *matCellDef="let t" style="width: 110px;"><span class="truncate">{{ t.transactionType }}</span></td>
+      </ng-container>
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef style="width: 130px;">Categorie</th>
+        <td mat-cell *matCellDef="let t" style="width: 130px;">
+          @if (editingCategoryTransactionId === t.transactionId) {
+          <select class="classic-category-select" [ngModel]="t.categoryId" (ngModelChange)="onCategorySelect(t, $event)" (blur)="onCategoryDropdownBlur()" autofocus>
+            <option [ngValue]="undefined">(geen)</option>
+            @for (c of categories; track c.categoryId) {
+            <option [ngValue]="c.categoryId">{{ c.name }}</option>
+            }
+          </select>
+          } @else {
+          <span class="truncate" style="cursor:pointer;" (click)="onCategoryClick(t)">
+            {{ getCategoryName(t.categoryId) }}
+          </span>
+          }
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef style="width: 40px;"></th>
+        <td mat-cell *matCellDef="let t" style="width: 40px; text-align: center;">
+          <button mat-icon-button color="primary" (click)="openTransactionDetailsDialog(t)" title="Details">
+            <mat-icon>info</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="allDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: allDisplayedColumns"></tr>
+    </table>
+    <div class="paginator-container" style="display: flex; justify-content: flex-end; margin-top: 4px;">
+      <mat-paginator [length]="filteredTransactions.length"
+                     [pageIndex]="pageIndex"
+                     [pageSize]="pageSize"
+                     [pageSizeOptions]="[5, 10, 25, 50]"
+                     showFirstLastButtons
+                     (page)="pageIndex = $event.pageIndex; pageSize = $event.pageSize; updatePagedTransactions()">
+      </mat-paginator>
+    </div>
+    } @else if (!isLoading && filteredTransactions.length === 0) {
+    <p>Geen transacties gevonden.</p>
+    }
+  </section>
+</div>

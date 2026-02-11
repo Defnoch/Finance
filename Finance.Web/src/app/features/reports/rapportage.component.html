@@ -1,0 +1,97 @@
+<div class="container py-4">
+  <h2>Rapportages</h2>
+  <div class="row">
+    <div class="col-12 col-md-6 mb-4"> <!-- Changed from col-md-6 to col-12 col-md-6 for better grid behavior -->
+      <mat-form-field appearance="outline" style="width: 75%; min-width: 250px; max-width: 100%;"> <!-- Removed w-100 class, kept width: 50% and min-width for better sizing -->
+        <mat-label>Periode</mat-label>
+        <mat-select [(ngModel)]="selectedPeriod" (selectionChange)="onPeriodChange()" style="width: 100%;">
+          @for (period of availablePeriods; track period.label) {
+            <mat-option [value]="period">{{ period.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <mat-card class="mb-4">Rapportage van {{ selectedPeriod?.label || '...' }}</mat-card>
+
+  <!-- KPI's -->
+  <div class="row mb-4">
+    <div class="col-md-4 mb-3 mb-md-0">
+      <mat-card class="kpi-card kpi-income">
+        <div class="kpi-label">Inkomen</div>
+        <div class="kpi-value">{{ income | currency:'EUR':'symbol':'1.2-2':'nl-NL' }}</div>
+      </mat-card>
+    </div>
+    <div class="col-md-4 mb-3 mb-md-0">
+      <mat-card class="kpi-card kpi-expenses">
+        <div class="kpi-label">Uitgaven</div>
+        <div class="kpi-value">-{{ (expenses * -1) | currency:'EUR':'symbol':'1.2-2':'nl-NL' }}</div>
+      </mat-card>
+    </div>
+    <div class="col-md-4">
+      <mat-card class="kpi-card kpi-balance">
+        <div class="kpi-label">Saldo</div>
+        <div class="kpi-value">{{ balance | currency:'EUR':'symbol':'1.2-2':'nl-NL' }}</div>
+      </mat-card>
+    </div>
+  </div>
+    
+  <!-- Saldo Over Tijd over volledige breedte -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <mat-card class="dashboard-tile tile-saldo w-100">
+        <h3>Saldo Over Tijd</h3>
+        <ng-container *ngIf="chartReady">
+          <canvas baseChart
+            [datasets]="saldoChartData"
+            [labels]="saldoChartLabels"
+            [options]="saldoChartOptions"
+            [type]="saldoChartType">
+          </canvas>
+        </ng-container>
+        <ng-container *ngIf="!chartReady">
+          <div>Grafiek wordt geladen...</div>
+        </ng-container>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- De andere grafieken naast elkaar -->
+  <div class="row">
+    <div class="col-md-6 mb-4 mb-md-0">
+      <mat-card class="dashboard-tile tile-donut">
+        <h3>Uitgaven per categorie</h3>
+        <ng-container *ngIf="chartReady">
+          <canvas baseChart
+            [datasets]="doughnutData.datasets"
+            [labels]="doughnutLabels"
+            [options]="doughnutChartOptions"
+            [type]="doughnutChartType"
+            [plugins]="[ChartDataLabels]">
+          </canvas>
+        </ng-container>
+        <ng-container *ngIf="!chartReady">
+          <div>Grafiek wordt geladen...</div>
+        </ng-container>
+      </mat-card>
+    </div>
+    <div class="col-md-6">
+      <mat-card class="dashboard-tile tile-bar">
+        <h3>Maandelijkse Uitgaven</h3>
+        <ng-container *ngIf="chartReady">
+          <canvas baseChart
+            #stackedBarChart
+            [datasets]="stackedBarData.datasets"
+            [labels]="stackedBarLabels"
+            [options]="stackedBarChartOptions"
+            [type]="stackedBarChartType"
+            [plugins]="[ChartDataLabels]">
+          </canvas>
+        </ng-container>
+        <ng-container *ngIf="!chartReady">
+          <div>Grafiek wordt geladen...</div>
+        </ng-container>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>{{ isNew ? 'Nieuwe regel' : 'Regel bewerken' }}</h2>
+<mat-dialog-content>
+    <form>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Naam</mat-label>
+            <input matInput [(ngModel)]="rule.name" name="ruleName">
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Prioriteit</mat-label>
+            <input matInput type="number" [(ngModel)]="rule.priority" name="rulePriority">
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Categorie</mat-label>
+            <mat-select [(ngModel)]="rule.categoryId" name="ruleCategory">
+                <mat-option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div style="margin-top: 1rem;">
+            <label><strong>Condities</strong></label>
+            <div *ngFor="let cond of rule.conditions; let i = index" style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
+                <mat-form-field appearance="fill" style="width: 120px;">
+                    <mat-label>Veld</mat-label>
+                    <input matInput [(ngModel)]="cond.field" [name]="'condField' + i" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <mat-form-field appearance="fill" style="width: 120px;">
+                    <mat-label>Operator</mat-label>
+                    <input matInput [(ngModel)]="cond.operator" [name]="'condOperator' + i" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <mat-form-field appearance="fill" style="width: 120px;">
+                    <mat-label>Waarde</mat-label>
+                    <input matInput [(ngModel)]="cond.value" [name]="'condValue' + i" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <button mat-icon-button color="warn" type="button" (click)="removeCondition(i)"><mat-icon>delete</mat-icon></button>
+            </div>
+            <button mat-button type="button" (click)="addCondition()">Conditie toevoegen</button>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Annuleren</button>
+    <button mat-raised-button color="primary" (click)="save()" [disabled]="!rule.name">Opslaan</button>
+</mat-dialog-actions>

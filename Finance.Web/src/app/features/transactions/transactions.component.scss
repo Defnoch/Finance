@@ -1,0 +1,30 @@
+.filters form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.section {
+  margin-top: 1.5rem;
+}
+
+// Verwijder table, th, td custom CSS zodat Material layout correct werkt
+
+.positive {
+  color: #2e7d32;
+}
+
+.negative {
+  color: #c62828;
+}
+
+.error {
+  color: #c62828;
+}

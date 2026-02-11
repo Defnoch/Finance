@@ -1,0 +1,40 @@
+services:
+  finance-api:
+    build:
+      context: .
+      dockerfile: Finance.Api/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:5055
+      ASPNETCORE_ENVIRONMENT: Production
+      Cors__AllowedOrigin: http://localhost
+      ConnectionStrings__FinanceDatabase: Data Source=/data/finance.db
+    volumes:
+      - ./data:/data
+    networks:
+      - finance-net
+
+  finance-worker:
+    build:
+      context: .
+      dockerfile: Finance.BackgroundTasks/Dockerfile
+    environment:
+      Api__BaseUrl: http://finance-api:5055/
+    depends_on:
+      - finance-api
+    networks:
+      - finance-net
+
+  finance-web:
+    build:
+      context: .
+      dockerfile: Finance.Web/Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - finance-api
+    networks:
+      - finance-net
+
+networks:
+  finance-net:
+    driver: bridge

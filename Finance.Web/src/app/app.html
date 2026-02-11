@@ -1,0 +1,114 @@
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * Delete the template below * * * * * * * * * -->
+<!-- * * * * * * * to get started with your project! * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+<style>
+  html, body {
+    height: 100%;
+    background: #f8f9fa;
+  }
+  body, .app-root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+  main {
+    flex: 1 0 auto;
+  }
+  footer {
+    margin-top: auto;
+  }
+
+  .app-header {
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    margin-bottom: 0;
+  }
+  .app-header h1 {
+    color: #2e7d32;
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+  .app-header .nav {
+    margin-top: 1rem;
+  }
+  .app-header .nav a {
+    color: #2e7d32;
+    text-decoration: underline;
+    margin: 0 0.5rem;
+    font-weight: 500;
+  }
+  .app-header .nav a.active {
+    text-decoration: underline;
+    font-weight: 700;
+  }
+
+  .app-main {
+    padding: 1rem;
+  }
+
+  .app-footer {
+    background: #fff;
+    border-top: 1px solid #dee2e6;
+    padding: 1.5rem 0;
+  }
+  .app-footer a {
+    color: white;
+    text-decoration: none;
+    margin: 0 1rem;
+  }
+  .app-footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+
+
+
+
+<div class="app-root">
+  <header class="app-header">
+    <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between">
+      <div>
+        <h1>Finance dashboard</h1>
+        <nav class="nav justify-content-center">
+          <a routerLink="/transactions" routerLinkActive="active">Transacties</a>
+          <a routerLink="/reports" routerLinkActive="active">Rapportages</a>
+          <a routerLink="/rules" routerLinkActive="active">Categorieën</a>
+          <a routerLink="/import" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Import</a>
+        </nav>
+      </div>
+      <div class="d-flex gap-2 align-items-center">
+        <app-account-year-select></app-account-year-select>
+      </div>
+    </div>
+  </header>
+  <main class="container my-5">
+    <router-outlet></router-outlet>
+  </main>
+  <footer class="app-footer">
+    <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+      <span class="text-muted">© 2026 Finance dashboard</span>
+      <nav class="d-flex gap-3">
+        <!-- Optioneel: extra links -->
+      </nav>
+    </div>
+  </footer>
+</div>
+
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->

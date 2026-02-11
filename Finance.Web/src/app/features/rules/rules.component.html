@@ -1,0 +1,143 @@
+<div class="dashboard-container">
+  <h1>Categorieën & Regelbeheer</h1>
+  <mat-tab-group [(selectedIndex)]="tabIndex">
+    <mat-tab label="Unieke transacties">
+      <div class="tab-description">
+        <p>In dit overzicht zie je unieke transacties die nog niet aan een regel zijn gekoppeld. Je kunt hier snel regels aanmaken of transacties negeren.</p>
+      </div>
+      <table mat-table [dataSource]="pagedCombos" class="mat-elevation-z2 mat-table--dense">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Naam</th>
+          <td mat-cell *matCellDef="let combo">{{ combo.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="transactionType">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Type</th>
+          <td mat-cell *matCellDef="let combo">{{ combo.transactionType }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Actie</th>
+          <td mat-cell *matCellDef="let combo">
+            <button mat-icon-button color="primary" title="Regel maken" (click)="openAddRuleDialogForCombo(combo)">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="ignoreCombo(combo)" title="Negeren">
+              <mat-icon>block</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" (click)="openDetails(combo)" title="Details">
+              <mat-icon>info</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name','transactionType','actions']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name','transactionType','actions']"></tr>
+      </table>
+      <div class="paginator-container">
+        <mat-paginator [length]="totalCombos" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons (page)="onPage($event)"></mat-paginator>
+      </div>
+    </mat-tab>
+    <mat-tab label="Regels">
+      <div class="tab-description">
+        <p>Hier beheer je alle categorisatieregels. Elke regel koppelt transacties automatisch aan een categorie op basis van voorwaarden.</p>
+      </div>
+      <button mat-raised-button color="primary" class="mb-1" (click)="addRule()">Nieuwe regel</button>
+      <table mat-table [dataSource]="rulesPaged" class="mat-elevation-z2 mat-table--dense">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Naam</th>
+          <td mat-cell *matCellDef="let rule">{{ rule.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Categorie</th>
+          <td mat-cell *matCellDef="let rule">
+            @if (rule.categoryId) {
+              @if (getCategoryById(rule.categoryId)) {
+                <span class="category-label" [ngStyle]="colorStyle(getCategoryById(rule.categoryId)?.colorHex)">
+                  {{ getCategoryById(rule.categoryId)?.name }}
+                </span>
+              } @else {
+                <span style="color: #aaa">Onbekend</span>
+              }
+            } @else {
+              <span style="color: #aaa">-</span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Actie</th>
+          <td mat-cell *matCellDef="let rule">
+            <button mat-button (click)="editRule(rule)">Bewerk</button>
+            <button mat-button (click)="deleteRule(rule)">Verwijder</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name','category','actions']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name','category','actions']"></tr>
+      </table>
+      <div class="paginator-container">
+        <mat-paginator [length]="rulesTotal" [pageSize]="rulesPageSize" [pageIndex]="rulesPageIndex" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons (page)="onRulesPage($event)"></mat-paginator>
+      </div>
+    </mat-tab>
+    <mat-tab label="Categorieën">
+      <div class="tab-description">
+        <p>Hier beheer je alle categorieën. Je kunt categorieën toevoegen, bewerken of verwijderen. Elke categorie heeft een naam, kleur en type.</p>
+      </div>
+      <button mat-raised-button color="primary" (click)="addCategory()" class="mb-1">Nieuwe categorie</button>
+      <table mat-table [dataSource]="categoriesPaged" class="mat-elevation-z2 mat-table--dense">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Naam</th>
+          <td mat-cell *matCellDef="let c">{{ c.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="color">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Kleur</th>
+          <td mat-cell *matCellDef="let c">
+            <span class="category-label" [ngStyle]="colorStyle(c.colorHex)">{{ c.name }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="kind">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Type</th>
+          <td mat-cell *matCellDef="let c">{{ c.kind }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell bold">Acties</th>
+          <td mat-cell *matCellDef="let c">
+            <button mat-button (click)="editCategory(c)">Bewerk</button>
+            <button mat-button (click)="deleteCategory(c)">Verwijder</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['name','color','kind','actions']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name','color','kind','actions']"></tr>
+      </table>
+      <div class="paginator-container">
+        <mat-paginator [length]="categoriesTotal" [pageSize]="categoriesPageSize" [pageIndex]="categoriesPageIndex" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons (page)="onCategoriesPage($event)"></mat-paginator>
+      </div>
+      @if (editingCategory) {
+        <form class="edit-form">
+          <h3>{{ isNewCategory ? 'Nieuwe categorie' : 'Categorie bewerken' }}</h3>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Naam</mat-label>
+            <input matInput [(ngModel)]="editingCategory.name" name="catName">
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Type</mat-label>
+            <mat-select [(ngModel)]="editingCategory.kind" name="catKind">
+              <mat-option value="Expense">Expense</mat-option>
+              <mat-option value="Income">Income</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Kleur</mat-label>
+            <input matInput type="color" [(ngModel)]="editingCategory.colorHex" name="catColor">
+          </mat-form-field>
+          <div class="edit-form-actions">
+            <button mat-raised-button color="primary" type="button" (click)="saveCategory()" [disabled]="isSavingCategory">Opslaan</button>
+            <button mat-button type="button" (click)="cancelCategoryEdit()" [disabled]="isSavingCategory">Annuleren</button>
+          </div>
+          @if (isSavingCategory) {
+            <span>Categorie wordt opgeslagen...</span>
+          }
+          @if (categoryError) {
+            <span class="error-message">{{ categoryError }}</span>
+          }
+        </form>
+      }
+    </mat-tab>
+  </mat-tab-group>
+</div>
