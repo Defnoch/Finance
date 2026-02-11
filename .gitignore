@@ -1,0 +1,43 @@
+# Ignore build output and temporary files for all .NET projects
+bin/
+obj/
+*.tmp
+*.log
+*.pdb
+*.user
+*.cache
+*.db
+*.DS_Store
+# Ignore test output
+*.TestResults/
+testhost.dll
+testcentric.engine.metadata.dll
+# Ignore generated clients
+Finance.ApiClientGenerator/GeneratedClients/
+# Ignore local SQLite database
+Finance.Api/finance.db
+
+# JetBrains Rider / IntelliJ
+.idea/
+*.sln.iml
+*.iml
+
+# Rider local workspace files
+*.DotSettings.user
+_ReSharper*/
+*.user
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+coverage/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files (optioneel)
+.env
+.env.*
