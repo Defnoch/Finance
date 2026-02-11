@@ -8,19 +8,15 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       Cors__AllowedOrigin: http://localhost
       ConnectionStrings__FinanceDatabase: Data Source=/data/finance.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5055/health/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      # Give the API extra time to perform initial DB migrations and startup
+      start_period: 120s
     volumes:
       - ./data:/data
-    networks:
-      - finance-net
-
-  finance-worker:
-    build:
-      context: .
-      dockerfile: Finance.BackgroundTasks/Dockerfile
-    environment:
-      Api__BaseUrl: http://finance-api:5055/
-    depends_on:
-      - finance-api
     networks:
       - finance-net
 
@@ -31,7 +27,28 @@ services:
     ports:
       - "4200:80"
     depends_on:
-      - finance-api
+      finance-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks:
+      - finance-net
+
+  finance-worker:
+    build:
+      context: .
+      dockerfile: Finance.BackgroundTasks/Dockerfile
+    environment:
+      Api__BaseUrl: http://finance-api:5055/
+    depends_on:
+      finance-api:
+        condition: service_healthy
+      finance-web:
+        condition: service_healthy
     networks:
       - finance-net
 

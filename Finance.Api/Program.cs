@@ -1,3 +1,4 @@
+using Finance.Api.HealthChecks;
 using Finance.Application.BackgroundTasks;
 using Finance.Domain.Import;
 using Finance.Domain.Repositories;
@@ -5,12 +6,20 @@ using Finance.Infrastructure.Data;
 using Finance.Infrastructure.Import;
 using Finance.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+// Register health checks (readiness/liveness endpoints provided via controller)
+builder.Services.AddHealthChecks()
+    .AddCheck<DbHealthCheck>("database");
+
+// Register the DbHealthCheck so it can be resolved
+builder.Services.AddScoped<DbHealthCheck>();
 
 // Database (SQLite of andere provider) - voorlopig SQLite file in root
 builder.Services.AddDbContext<FinanceDbContext>(options =>
