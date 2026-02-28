@@ -18,7 +18,7 @@ services:
     volumes:
       - ./data:/data
     networks:
-      - finance-net
+      - finance-network
 
   finance-web:
     build:
@@ -36,7 +36,8 @@ services:
       retries: 10
       start_period: 10s
     networks:
-      - finance-net
+      - finance-network
+      - internal_network
 
   finance-worker:
     build:
@@ -50,8 +51,10 @@ services:
       finance-web:
         condition: service_healthy
     networks:
-      - finance-net
+      - finance-network
 
 networks:
+  internal_network:
+    external: true
   finance-net:
     driver: bridge
