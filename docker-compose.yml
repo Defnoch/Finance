@@ -56,5 +56,5 @@ services:
 networks:
   internal_network:
     external: true
-  finance-net:
+  finance-network:
     driver: bridge
